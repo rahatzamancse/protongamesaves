@@ -49,6 +49,7 @@ impl CompatDataPage {
         search_entry.set_placeholder_text(Some("🔍 Search Game IDs or Save Folders..."));
         search_entry.set_margin_top(12);
         search_entry.set_margin_bottom(6);
+        search_entry.add_css_class("emoji");
         widget.append(&search_entry);
 
         let scroll = ScrolledWindow::new();
@@ -272,7 +273,7 @@ impl CompatDataPage {
         if !found_any_saves {
              let no_saves_label = Label::new(Some("🤷 No known save folders found"));
             no_saves_label.set_halign(Align::Center);
-            no_saves_label.set_css_classes(&["dim-label"]);
+            no_saves_label.set_css_classes(&["dim-label", "emoji"]);
             no_saves_label.set_margin_top(12);
             no_saves_label.set_margin_bottom(12);
             let placeholder_row = ActionRow::new();

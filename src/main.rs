@@ -29,10 +29,14 @@ mod ui;
 mod compatdata;
 mod config;
 mod manifest;
+mod styles;
 
 fn main() -> glib::ExitCode {
     // Initialize GTK
     adw::init().expect("Failed to initialize libadwaita");
+    
+    // Load application CSS
+    styles::load_app_css();
     
     // Create a new application
     let app = adw::Application::builder()

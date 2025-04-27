@@ -5,6 +5,7 @@ use serde_yaml;
 use std::collections::HashMap;
 use std::fs; // Explicitly import serde_yaml
 use std::path::PathBuf; // Ensure Path and PathBuf are imported
+use crate::compatdata::PrefixData; // Need PrefixData for the new function
 
 // --- Enums based on schema (can be expanded) ---
 #[derive(Debug, Deserialize, Clone, PartialEq, Eq, Hash)]
@@ -209,38 +210,55 @@ pub fn resolve_manifest_path(manifest_path: &str, config: &Config, game_id: &str
     Some(PathBuf::from(resolved))
 }
 
-// --- Game Data Retrieval (Updated to use nested ID) ---
-pub fn _get_game_details_from_steam_id<'a>(
+/// Tries to identify a game in the manifest by matching resolved manifest paths
+/// against paths found within a specific prefix's save locations.
+pub fn find_game_for_prefix_by_path<'a>(
     manifest: &'a ManifestData,
-    steam_id_str: &str,
+    prefix_data: &PrefixData,
+    config: &Config,
 ) -> Option<(String, &'a GameEntry)> {
-    let steam_id_u32 = steam_id_str.parse::<u32>().ok()?;
+    // Iterate through locations found in the prefix scan
+    for save_loc in &prefix_data.save_locations {
+        for entry in &save_loc.entries {
+            let found_path = &entry.path; // The actual path found on disk
 
-    for (name, entry) in &manifest.games {
-        // Check primary steam ID
-        if let Some(steam_info) = &entry._steam {
-            if steam_info._id == steam_id_u32 {
-                return Some((name.clone(), entry));
-            }
-        }
-        // Check extra steam IDs within the nested 'id' field
-        if let Some(id_field) = &entry._id {
-            if let Some(extra_ids) = &id_field._steam_extra {
-                if extra_ids.contains(&steam_id_u32) {
-                    return Some((name.clone(), entry));
+            // Normalize the found path once
+            let normalized_found = found_path
+                .as_path()
+                .to_string_lossy()
+                .trim_end_matches('/')
+                .to_lowercase();
+            if normalized_found.is_empty() { continue; } // Skip empty paths
+
+            // Now, iterate through the manifest to see if this path matches any rule
+            for (manifest_game_name, manifest_entry) in &manifest.games {
+                if let Some(files) = &manifest_entry.files {
+                    for manifest_path_str in files.keys() {
+                        // Resolve the manifest path string using the prefix's game_id
+                        if let Some(resolved_manifest_path) = resolve_manifest_path(
+                            manifest_path_str,
+                            config,
+                            &prefix_data.game_id,
+                        ) {
+                            // Normalize the resolved manifest path
+                            let normalized_manifest = resolved_manifest_path
+                                .as_path()
+                                .to_string_lossy()
+                                .trim_end_matches('/')
+                                .to_lowercase();
+
+                            // Check if the normalized manifest path starts with the normalized found path
+                            if !normalized_manifest.is_empty() && normalized_manifest.starts_with(&normalized_found) {
+                                // Found a match! Return the game name and entry
+                                return Some((manifest_game_name.clone(), manifest_entry));
+                            }
+                        }
+                    }
                 }
-            }
-        }
-    }
+            } // End manifest game iteration
+        } // End save entry iteration
+    } // End save location iteration
+
+    // If no match was found after checking all paths and manifest entries
     None
 }
-
-// Example usage (no change needed here)
-pub fn _find_game_name_for_app_id(manifest: &ManifestData, app_id: &str) -> Option<String> {
-    _get_game_details_from_steam_id(manifest, app_id).map(|(name, _)| name)
-}
-
-// TODO: Implement manifest parsing logic
-// pub struct ManifestData { ... }
-// pub fn parse_manifest(config: &Config) -> Result<ManifestData> { ... }
-// pub fn get_game_name(manifest: &ManifestData, app_id: &str) -> Option<String> { ... }
