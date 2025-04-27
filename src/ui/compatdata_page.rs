@@ -2,10 +2,9 @@ use adw::prelude::*;
 use adw::{ExpanderRow, MessageDialog, ActionRow};
 use gtk::{
     Box, Button, Label, ListBox, ListBoxRow, Orientation, ScrolledWindow, 
-    SelectionMode, Separator, glib, Align, Image, gio, SearchEntry, AccessibleRole,
-    Accessible // Import Accessible trait itself
+    SelectionMode, Align, SearchEntry // Import Accessible trait itself
 };
-use gtk::prelude::*; 
+ 
 use gtk;
 use std::cell::RefCell;
 use std::path::{Path, PathBuf};
@@ -15,7 +14,7 @@ use fuzzy_matcher::skim::SkimMatcherV2;
 use std::collections::HashMap;
 use anyhow::{Result, anyhow}; // Import anyhow
 
-use crate::compatdata::{self, PrefixData, SaveLocation, SaveEntry};
+use crate::compatdata::{self, PrefixData};
 use crate::config::Config;
 
 pub struct CompatDataPage {
@@ -26,7 +25,7 @@ pub struct CompatDataPage {
     search_entry: SearchEntry,
     matcher: Rc<SkimMatcherV2>,
     // Store detected directories (AppID -> Path)
-    detected_dirs: Rc<RefCell<HashMap<String, PathBuf>>>, 
+    _detected_dirs: Rc<RefCell<HashMap<String, PathBuf>>>, 
 }
 
 impl CompatDataPage {
@@ -72,7 +71,7 @@ impl CompatDataPage {
             listbox: listbox.clone(), // Clone for struct
             search_entry: search_entry.clone(),
             matcher,
-            detected_dirs: detected_dirs.clone(),
+            _detected_dirs: detected_dirs.clone(),
         };
         
         // --- Connect Search Signal for Manual Filtering ---

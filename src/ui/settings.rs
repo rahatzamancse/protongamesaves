@@ -1,6 +1,6 @@
 use adw::prelude::*;
 use adw::{ActionRow, PreferencesGroup, PreferencesPage, PreferencesWindow, MessageDialog, EntryRow};
-use gtk::{Button, FileChooserAction, FileChooserDialog, ResponseType, gio, glib, Align, Orientation};
+use gtk::{Button, glib, Align, FileDialog, Window, gio};
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -12,10 +12,9 @@ type OnManifestUpdate = Rc<RefCell<dyn FnMut()>>; // Use Rc<RefCell<dyn FnMut>> 
 
 pub struct SettingsDialog {
     dialog: PreferencesWindow,
-    // Keep config ref to update manifest URL
-    config: Rc<RefCell<Config>>,
+    _config: Rc<RefCell<Config>>,
     // Callback to trigger updates in the main window
-    on_update: OnManifestUpdate,
+    _on_update: OnManifestUpdate,
 }
 
 impl SettingsDialog {
@@ -47,7 +46,13 @@ impl SettingsDialog {
         let config_clone = config.clone(); 
         let path_row_clone = path_row.clone();
         browse_button.connect_clicked(move |_| {
-            Self::show_steam_folder_chooser(&dialog_clone, config_clone.clone(), path_row_clone.clone());
+            // Use spawn_local for the async file dialog operation
+            let config_clone_inner = config_clone.clone();
+            let path_row_clone_inner = path_row_clone.clone();
+            let parent_window = dialog_clone.clone().upcast::<Window>(); // Need Window for dialog parent
+            glib::MainContext::default().spawn_local(async move {
+                Self::show_steam_folder_chooser_async(parent_window, config_clone_inner, path_row_clone_inner).await;
+            });
         });
         steam_group.add(&path_row);
 
@@ -112,46 +117,55 @@ impl SettingsDialog {
         });
         manifest_group.add(&update_row);
         
-        Self { dialog, config, on_update }
+        Self { dialog, _config: config, _on_update: on_update }
     }
     
     pub fn present(&self) {
         self.dialog.present();
     }
     
-    // Renamed for clarity
-    fn show_steam_folder_chooser(parent: &PreferencesWindow, config: Rc<RefCell<Config>>, row: ActionRow) {
-        let file_dialog = FileChooserDialog::new(
-            Some("Select Steam Directory"),
-            Some(parent),
-            FileChooserAction::SelectFolder,
-            &[
-                ("Cancel", ResponseType::Cancel),
-                ("Open", ResponseType::Accept),
-            ],
-        );
-        
-        let current_path = config.borrow().steam_path().to_path_buf();
-        if current_path.exists() {
-             let _ = file_dialog.set_current_folder(Some(&gio::File::for_path(current_path))); // Ignore result
-        }
-        
-        file_dialog.connect_response(glib::clone!(@strong config, @weak row => move |dialog, response| {
-            if response == ResponseType::Accept {
-                if let Some(file) = dialog.file() {
-                    if let Some(path) = file.path() {
-                        if let Err(e) = config.borrow_mut().set_steam_path(path.clone()) {
-                             eprintln!("Error setting steam path: {}", e);
-                             // TODO: Show error dialog
-                        } else {
-                            row.set_subtitle(&path.to_string_lossy());
-                        }
+    // Renamed for clarity and made async helper
+    async fn show_steam_folder_chooser_async(parent: Window, config: Rc<RefCell<Config>>, row: ActionRow) {
+        let file_dialog = FileDialog::new();
+        file_dialog.set_title("Select Steam Directory");
+        // FileChooserAction::SelectFolder isn't directly used, instead use appropriate method
+
+        // Use select_folder_future
+        match file_dialog.select_folder_future(Some(&parent)).await {
+            Ok(folder) => { // Directly get the folder on Ok
+                if let Some(path) = folder.path() {
+                    println!("Selected folder: {}", path.display());
+                    if let Err(e) = config.borrow_mut().set_steam_path(path.clone()) {
+                         eprintln!("Error setting steam path: {}", e);
+                         Self::show_error_dialog_transient(&parent, "Error Setting Path", &format!("Failed to set Steam path: {}", e));
+                    } else {
+                        row.set_subtitle(&path.to_string_lossy());
                     }
                 }
+            },
+            Err(e) => {
+                // Check if the error is due to user cancellation
+                if e.kind::<gio::IOErrorEnum>() == Some(gio::IOErrorEnum::Cancelled) {
+                     println!("Folder selection cancelled.");
+                } else {
+                    eprintln!("Error selecting folder: {}", e);
+                    Self::show_error_dialog_transient(&parent, "Selection Error", &format!("Failed to select folder: {}", e));
+                }
             }
-            dialog.destroy();
-        }));
-        
-        file_dialog.present();
+        }
+    }
+    
+    // Helper to show error dialog, requires parent window
+    fn show_error_dialog_transient(parent: &impl IsA<Window>, title: &str, message: &str) {
+        // Ensure this runs on the main thread if called from async context
+        // glib::MainContext::default().spawn_local might be needed if calling from non-main thread
+        let dialog = MessageDialog::builder()
+            .transient_for(parent)
+            .modal(true)
+            .heading(title)
+            .body(message)
+            .build();
+        dialog.add_response("ok", "OK");
+        dialog.present();
     }
 } 

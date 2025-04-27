@@ -1,20 +1,20 @@
 use adw::prelude::*;
-use gtk::{glib, Align, Box, Label, ListBox, Orientation, PolicyType, ScrolledWindow, SelectionMode};
+use gtk::{Align, Box, Label, ListBox, Orientation, PolicyType, ScrolledWindow, SelectionMode};
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::collections::HashMap; // For storing game data
-use std::path::PathBuf; // Import PathBuf
+ // Import PathBuf
 
 use crate::compatdata::PrefixData; // Import PrefixData
 use crate::config::Config;
-use crate::manifest::{self, ManifestData, GameEntry}; // Import manifest structs
+use crate::manifest::{self, ManifestData}; // Import manifest structs
 
 // Structure to hold combined game information
 #[derive(Clone)] // Needed for potential sorting/filtering
 pub struct GameInfo {
     pub app_id: String,
     pub name: String,
-    pub entry: manifest::GameEntry, // Store the full entry for details
+    pub _entry: manifest::GameEntry, // Store the full entry for details
     // pub save_paths: Vec<PathBuf>, // We'll add detected save paths later
 }
 
@@ -123,7 +123,7 @@ impl GamesPage {
                                          let game_info = GameInfo {
                                              app_id: prefix_data.game_id.clone(),
                                              name: manifest_game_name.clone(),
-                                             entry: manifest_entry.clone(), 
+                                             _entry: manifest_entry.clone(), 
                                          };
                                          games_map.insert(prefix_data.game_id.clone(), game_info);
                                          game_identified_for_prefix = true;

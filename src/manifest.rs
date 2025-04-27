@@ -4,7 +4,7 @@ use serde::Deserialize;
 use serde_yaml;
 use std::collections::HashMap;
 use std::fs; // Explicitly import serde_yaml
-use std::path::{Path, PathBuf}; // Ensure Path and PathBuf are imported
+use std::path::PathBuf; // Ensure Path and PathBuf are imported
 
 // --- Enums based on schema (can be expanded) ---
 #[derive(Debug, Deserialize, Clone, PartialEq, Eq, Hash)]
@@ -32,30 +32,30 @@ pub enum Store {
 // --- Constraint Structs ---
 #[derive(Debug, Deserialize, Clone)]
 pub struct FileConstraint {
-    pub os: Option<Os>,
-    pub store: Option<Store>,
+    pub _os: Option<Os>,
+    pub _store: Option<Store>,
 }
 
 // --- ID Structs ---
 #[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct GameSteamInfo {
-    pub id: u32,
+    pub _id: u32,
 }
 
 #[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct GameGogInfo {
-    pub id: u32,
+    pub _id: u32,
 }
 
 #[derive(Debug, Deserialize, Clone)] // New struct for nested IDs
 #[serde(rename_all = "camelCase")]
 pub struct IdField {
-    pub flatpak: Option<String>,
-    pub gog_extra: Option<Vec<u32>>,
-    pub lutris: Option<String>,
-    pub steam_extra: Option<Vec<u32>>,
+    pub _flatpak: Option<String>,
+    pub _gog_extra: Option<Vec<u32>>,
+    pub _lutris: Option<String>,
+    pub _steam_extra: Option<Vec<u32>>,
 }
 
 // --- Main Manifest Structs ---
@@ -63,24 +63,24 @@ pub struct IdField {
 #[serde(rename_all = "camelCase")]
 pub struct GameFileRule {
     // Removed incorrect 'path' field
-    pub tags: Option<Vec<String>>,
-    pub when: Option<Vec<FileConstraint>>,
+    pub _tags: Option<Vec<String>>,
+    pub _when: Option<Vec<FileConstraint>>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct GameEntry {
     pub files: Option<HashMap<String, GameFileRule>>, // Key is the path string
     #[serde(rename = "installDir")]
-    pub install_dir: Option<HashMap<String, serde_yaml::Value>>,
-    pub launch: Option<HashMap<String, serde_yaml::Value>>,
-    pub registry: Option<HashMap<String, serde_yaml::Value>>, // Added registry
-    pub steam: Option<GameSteamInfo>,
-    pub gog: Option<GameGogInfo>, // Added GOG info
-    pub id: Option<IdField>,      // Added nested ID field
+    pub _install_dir: Option<HashMap<String, serde_yaml::Value>>,
+    pub _launch: Option<HashMap<String, serde_yaml::Value>>,
+    pub _registry: Option<HashMap<String, serde_yaml::Value>>, // Added registry
+    pub _steam: Option<GameSteamInfo>,
+    pub _gog: Option<GameGogInfo>, // Added GOG info
+    pub _id: Option<IdField>,      // Added nested ID field
     // Removed top-level steam_extra - it's now inside 'id'
-    pub alias: Option<String>,                 // Added alias
-    pub cloud: Option<HashMap<String, bool>>,  // Added cloud info
-    pub notes: Option<Vec<serde_yaml::Value>>, // Added notes
+    pub _alias: Option<String>,                 // Added alias
+    pub _cloud: Option<HashMap<String, bool>>,  // Added cloud info
+    pub _notes: Option<Vec<serde_yaml::Value>>, // Added notes
 }
 
 #[derive(Debug, Deserialize)]
@@ -210,7 +210,7 @@ pub fn resolve_manifest_path(manifest_path: &str, config: &Config, game_id: &str
 }
 
 // --- Game Data Retrieval (Updated to use nested ID) ---
-pub fn get_game_details_from_steam_id<'a>(
+pub fn _get_game_details_from_steam_id<'a>(
     manifest: &'a ManifestData,
     steam_id_str: &str,
 ) -> Option<(String, &'a GameEntry)> {
@@ -218,14 +218,14 @@ pub fn get_game_details_from_steam_id<'a>(
 
     for (name, entry) in &manifest.games {
         // Check primary steam ID
-        if let Some(steam_info) = &entry.steam {
-            if steam_info.id == steam_id_u32 {
+        if let Some(steam_info) = &entry._steam {
+            if steam_info._id == steam_id_u32 {
                 return Some((name.clone(), entry));
             }
         }
         // Check extra steam IDs within the nested 'id' field
-        if let Some(id_field) = &entry.id {
-            if let Some(extra_ids) = &id_field.steam_extra {
+        if let Some(id_field) = &entry._id {
+            if let Some(extra_ids) = &id_field._steam_extra {
                 if extra_ids.contains(&steam_id_u32) {
                     return Some((name.clone(), entry));
                 }
@@ -236,8 +236,8 @@ pub fn get_game_details_from_steam_id<'a>(
 }
 
 // Example usage (no change needed here)
-pub fn find_game_name_for_app_id(manifest: &ManifestData, app_id: &str) -> Option<String> {
-    get_game_details_from_steam_id(manifest, app_id).map(|(name, _)| name)
+pub fn _find_game_name_for_app_id(manifest: &ManifestData, app_id: &str) -> Option<String> {
+    _get_game_details_from_steam_id(manifest, app_id).map(|(name, _)| name)
 }
 
 // TODO: Implement manifest parsing logic

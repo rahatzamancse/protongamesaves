@@ -22,8 +22,8 @@ pub struct SaveEntry {
 // Represents a Proton prefix
 pub struct PrefixData {
     pub game_id: String,
-    pub path: PathBuf,
-    pub drive_c_path: PathBuf,
+    pub _path: PathBuf,
+    pub _drive_c_path: PathBuf,
     pub user_path: PathBuf,
     pub save_locations: Vec<SaveLocation>,
 }
@@ -40,8 +40,8 @@ impl PrefixData {
         
         Self {
             game_id: game_id.to_string(),
-            path: prefix_path,
-            drive_c_path,
+            _path: prefix_path,
+            _drive_c_path: drive_c_path,
             user_path,
             save_locations,
         }
@@ -89,13 +89,16 @@ impl PrefixData {
         Ok(())
     }
     
-    // Delete the entire prefix
-    pub fn delete(&self) -> Result<()> {
-        if !self.path.exists() {
+    // Delete the entire prefix directory
+    pub fn _delete(&self) -> Result<()> {
+        let prefix_path = &self._path; // Use the prefixed field
+        println!("Attempting to delete prefix directory: {}", prefix_path.display());
+        
+        if !prefix_path.exists() {
             return Err(anyhow!("Prefix path does not exist"));
         }
         
-        fs::remove_dir_all(&self.path)?;
+        fs::remove_dir_all(prefix_path)?;
         Ok(())
     }
 }

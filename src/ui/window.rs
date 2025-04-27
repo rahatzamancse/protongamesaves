@@ -1,6 +1,6 @@
 use adw::prelude::*;
-use adw::{ActionRow, ApplicationWindow, HeaderBar, PreferencesGroup, PreferencesPage, PreferencesWindow, WindowTitle};
-use gtk::{gio, glib, Box, Button, FileChooserAction, FileChooserDialog, Orientation, ResponseType, Stack, StackSwitcher};
+use adw::{ApplicationWindow, HeaderBar, MessageDialog};
+use gtk::{gio, glib, Box, Button, Orientation, Stack, StackSwitcher};
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -11,9 +11,9 @@ use crate::ui::settings::SettingsDialog;
 
 pub struct ProtonSavesWindow {
     window: ApplicationWindow,
-    config: Rc<RefCell<Config>>,
-    compat_page: Rc<CompatDataPage>,
-    games_page: Rc<RefCell<GamesPage>>,
+    _config: Rc<RefCell<Config>>,
+    _compat_page: Rc<CompatDataPage>,
+    _games_page: Rc<RefCell<GamesPage>>,
 }
 
 impl ProtonSavesWindow {
@@ -100,17 +100,21 @@ impl ProtonSavesWindow {
                 }
                 Err(e) => {
                     eprintln!("Error scanning compatdata: {}", e);
-                    // Show error dialog using the window's helper method if possible
-                    // Or create a new one.
-                    let error_dialog = gtk::MessageDialog::builder()
-                        .transient_for(&window_clone)
-                        .modal(true)
-                        .buttons(gtk::ButtonsType::Ok)
-                        .message_type(gtk::MessageType::Error)
-                        .text("Error Scanning Compatdata")
-                        .secondary_text(&format!("{}", e))
-                        .build();
-                    error_dialog.connect_response(|dialog, _| dialog.destroy());
+                    // Show error dialog using Adwaita MessageDialog
+                    let error_dialog = MessageDialog::new(
+                        Some(&window_clone), // Parent window
+                        Some("Error Scanning Compatdata"), // Title - WRAP IN SOME()
+                        Some(&format!("{}", e)) // Body text
+                    );
+                    error_dialog.add_response("ok", "OK"); // Add an "OK" button
+                    error_dialog.set_default_response(Some("ok")); // Make OK the default
+                    error_dialog.set_close_response("ok"); // Close when OK is clicked
+                    
+                    // Connect response to destroy the dialog
+                    error_dialog.connect_response(Some("ok"), |dialog, _response| {
+                        dialog.close(); // Use close() instead of destroy()
+                    });
+                    
                     error_dialog.present();
                 }
             }
@@ -126,9 +130,9 @@ impl ProtonSavesWindow {
         
         Self {
             window,
-            config,
-            compat_page,
-            games_page,
+            _config: config,
+            _compat_page: compat_page,
+            _games_page: games_page,
         }
     }
     
@@ -136,7 +140,7 @@ impl ProtonSavesWindow {
         self.window.present();
     }
     
-    fn create_actions(app: &adw::Application, window: ApplicationWindow, config: Rc<RefCell<Config>>, compat_page: Rc<CompatDataPage>, games_page: Rc<RefCell<GamesPage>>, refresh_button: Button) {
+    fn create_actions(app: &adw::Application, window: ApplicationWindow, config: Rc<RefCell<Config>>, _compat_page: Rc<CompatDataPage>, games_page: Rc<RefCell<GamesPage>>, refresh_button: Button) {
         // Quit action
         let quit_action = gio::SimpleAction::new("quit", None);
         quit_action.connect_activate(glib::clone!(@weak app => move |_, _| {
