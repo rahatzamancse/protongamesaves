@@ -1,0 +1,79 @@
+#!/bin/bash
+# Manual AUR package update script
+# Usage: ./scripts/update-aur.sh <version>
+
+set -e
+
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <version>"
+    echo "Example: $0 0.1.1"
+    exit 1
+fi
+
+VERSION="$1"
+REPO_URL="https://github.com/rahatzamancse/proton-game-saves"
+TARBALL_URL="${REPO_URL}/archive/v${VERSION}.tar.gz"
+
+echo "🔄 Updating AUR package to version ${VERSION}..."
+
+# Check if we're in the right directory
+if [ ! -f "PKGBUILD" ]; then
+    echo "❌ Error: PKGBUILD not found. Are you in the project root?"
+    exit 1
+fi
+
+# Create temporary directory for AUR operations
+TMP_DIR=$(mktemp -d)
+AUR_DIR="${TMP_DIR}/proton-game-saves"
+
+# Download and calculate checksum
+echo "📥 Downloading release tarball..."
+wget -O "${TMP_DIR}/release.tar.gz" "${TARBALL_URL}"
+SHA256=$(sha256sum "${TMP_DIR}/release.tar.gz" | cut -d' ' -f1)
+echo "✅ SHA256: ${SHA256}"
+
+# Clone AUR repository
+echo "📦 Cloning AUR repository..."
+git clone ssh://aur@aur.archlinux.org/proton-game-saves.git "${AUR_DIR}"
+cd "${AUR_DIR}"
+
+# Update PKGBUILD
+echo "📝 Updating PKGBUILD..."
+sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
+sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
+sed -i "s/^sha256sums=.*/sha256sums=('${SHA256}')/" PKGBUILD
+
+# Generate .SRCINFO
+echo "📋 Generating .SRCINFO..."
+makepkg --printsrcinfo > .SRCINFO
+
+# Show changes
+echo "📋 Changes to be committed:"
+git diff
+
+# Ask for confirmation
+read -p "🤔 Do you want to commit and push these changes? (y/N): " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "❌ Aborted by user"
+    rm -rf "${TMP_DIR}"
+    exit 1
+fi
+
+# Commit and push
+echo "🚀 Committing and pushing to AUR..."
+git add PKGBUILD .SRCINFO
+git commit -m "Update to version ${VERSION}
+
+- Updated pkgver to ${VERSION}
+- Updated sha256sums
+- Reset pkgrel to 1"
+
+git push origin master
+
+# Cleanup
+rm -rf "${TMP_DIR}"
+
+echo "✅ AUR package successfully updated to version ${VERSION}!"
+echo "📦 Users can now install with: paru -S proton-game-saves"
+echo "🔗 View on AUR: https://aur.archlinux.org/packages/proton-game-saves"

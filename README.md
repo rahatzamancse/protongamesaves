@@ -12,12 +12,22 @@ A GTK4 application written in Rust to manage Proton game save files for Steam ga
 
 ## Installation
 
-### Dependencies
+### From AUR (Arch Linux) - Recommended
+
+```bash
+paru -S proton-game-saves
+# or
+yay -S proton-game-saves
+```
+
+The AUR package is automatically updated when new releases are published.
+
+### Building from source
+
+#### Dependencies
 
 - Rust and Cargo
 - GTK4 and libadwaita development libraries
-
-### Building from source
 
 Clone this repository and build with Cargo:
 
