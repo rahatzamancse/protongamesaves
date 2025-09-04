@@ -17,18 +17,12 @@ A GTK4 application written in Rust to manage Proton game save files for Steam ga
 - Rust and Cargo
 - GTK4 and libadwaita development libraries
 
-On Arch Linux, install the dependencies with:
-
-```
-sudo pacman -S rust gtk4 libadwaita
-```
-
 ### Building from source
 
 Clone this repository and build with Cargo:
 
 ```
-git clone https://github.com/yourusername/proton-game-saves.git
+git clone https://github.com/rahatzamancse/proton-game-saves.git
 cd proton-game-saves
 cargo build --release
 ```

@@ -3,7 +3,13 @@ name = "proton_game_saves"
 version = "0.1.0"
 edition = "2021"
 authors = ["ProtonGameSaves Team"]
-description = "A tool to manage Proton game save files"
+description = "A GTK4 application to manage Proton game save files for Steam games"
+license = "GPL-3.0"
+repository = "https://github.com/rahatzamancse/proton-game-saves"
+homepage = "https://github.com/rahatzamancse/proton-game-saves"
+keywords = ["steam", "proton", "games", "saves", "gtk4"]
+categories = ["games"]
+readme = "README.md"
 
 [dependencies]
 gtk = { version = "0.7", package = "gtk4", features = ["v4_10"] }
