@@ -1,4 +1,4 @@
-# Maintainer: Your Name <your.email@example.com>
+# Maintainer: Rahat Zaman <rahatzamancse@gmail.com>
 pkgname=proton-game-saves
 pkgver=0.1.0
 pkgrel=1
