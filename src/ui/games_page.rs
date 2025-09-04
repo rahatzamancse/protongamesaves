@@ -1,7 +1,7 @@
 use adw::prelude::*;
 use adw::{ActionRow, ExpanderRow}; // Import Adwaita widgets
 use gtk::{
-    gio, glib, Align, Box, Button, Label, ListBox, Orientation, PolicyType, ScrolledWindow,
+    gio, glib, Align, Box, Button, Label, ListBox, Orientation, ScrolledWindow,
     SelectionMode, SearchEntry,
 }; // Import Button and SearchEntry
 use humansize::{format_size, DECIMAL}; // For formatting size
@@ -22,6 +22,7 @@ use crate::manifest::{self, ManifestData}; // Import manifest structs
 pub struct GameInfo {
     pub app_id: String,
     pub name: String,
+    #[allow(dead_code)] // Store the full entry for future details display
     pub entry: manifest::GameEntry, // Store the full entry for details
     pub save_locations: Vec<SaveLocationInfo>, // Store resolved/found locations
     pub total_size_bytes: u64,      // Store calculated size
@@ -126,7 +127,7 @@ impl GamesPage {
         // Check each row against the query
         let mut row = container.first_child();
         while let Some(child) = row {
-            let mut visible = false;
+            let visible;
             
             if let Some(expander) = child.downcast_ref::<ExpanderRow>() {
                 // Get the title text (game name)
@@ -428,7 +429,7 @@ impl GamesPage {
                     let final_title = format!("📁 {} ({})", title_base, size_formatted);
                     
                     // --- Create Subtitle (Abbreviated Path) ---
-                    let app_id = &game_info.app_id; // Get app_id from the outer loop's game_info
+                    let _app_id = &game_info.app_id; // Get app_id from the outer loop's game_info
                     let resolved_path = &location.resolved_path;
                     let config_borrow = self.config.borrow(); // Borrow config to get compatdata path
                     let compatdata_base_path = config_borrow.compatdata_path();

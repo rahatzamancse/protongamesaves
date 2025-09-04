@@ -1,4 +1,3 @@
-use gtk::prelude::*;
 use gtk::CssProvider;
 use std::path::Path;
 use std::fs;
