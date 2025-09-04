@@ -1,5 +1,15 @@
 # Proton Game Saves Manager
 
+![AUR Version](https://img.shields.io/aur/version/proton-game-saves)
+![AUR Last Modified](https://img.shields.io/aur/last-modified/proton-game-saves)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/y/rahatzamancse/proton-game-saves)
+![GitHub top language](https://img.shields.io/github/languages/top/rahatzamancse/proton-game-saves)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/rahatzamancse/proton-game-saves/update-aur.yml)
+![AUR Maintainer](https://img.shields.io/aur/maintainer/proton-game-saves)
+![AUR Popularity](https://img.shields.io/aur/popularity/proton-game-saves)
+![AUR Votes](https://img.shields.io/aur/votes/proton-game-saves)
+
+
 A GTK4 application written in Rust to manage Proton game save files for Steam games running through Proton compatibility layer.
 
 ## Features

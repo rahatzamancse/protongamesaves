@@ -132,12 +132,14 @@ pub fn list_game_ids(config: &Config) -> Result<Vec<String>> {
         }
     }
     
-    // Sort game IDs numerically if possible
+    // Sort game IDs numerically if possible, ensuring total order
     game_ids.sort_by(|a, b| {
         // Try to convert to integers for numerical sorting
         match (a.parse::<u64>(), b.parse::<u64>()) {
             (Ok(a_num), Ok(b_num)) => a_num.cmp(&b_num),
-            _ => a.cmp(b), // Fall back to string comparison
+            (Ok(_), Err(_)) => std::cmp::Ordering::Less,    // Numeric comes before non-numeric
+            (Err(_), Ok(_)) => std::cmp::Ordering::Greater, // Non-numeric comes after numeric
+            (Err(_), Err(_)) => a.cmp(b),                   // Both non-numeric, use string comparison
         }
     });
     
