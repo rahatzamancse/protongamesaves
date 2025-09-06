@@ -29,6 +29,7 @@ packaging/flatpak/repo/
 packaging/flatpak/.flatpak-builder/
 packaging/flatpak/venv/
 packaging/flatpak/generated-sources.json
+packaging/flatpak/flatpak-cargo-generator.py
 
 # AUR build artifacts
 packaging/aur/pkg/

@@ -11,6 +11,7 @@ const DEFAULT_MANIFEST_URL: &str = "https://raw.githubusercontent.com/mtkennerly
 pub struct ConfigData {
     steam_path: PathBuf,
     manifest_url: String,
+    first_run: bool,
 }
 
 pub struct Config {
@@ -43,6 +44,7 @@ impl Config {
             ConfigData {
                 steam_path: default_steam_path,
                 manifest_url: DEFAULT_MANIFEST_URL.to_string(),
+                first_run: true,
             }
         });
         
@@ -71,6 +73,9 @@ impl Config {
     pub fn manifest_cache_path(&self) -> &Path {
         &self.cache_path
     }
+    pub fn is_first_run(&self) -> bool {
+        self.data.first_run
+    }
     pub fn compatdata_path(&self) -> PathBuf {
         self.data.steam_path.join("steam/steamapps/compatdata")
     }
@@ -98,6 +103,10 @@ impl Config {
             return Err(anyhow!("Invalid URL format"));
         }
         self.data.manifest_url = url;
+        self.save_config()
+    }
+    pub fn mark_first_run_complete(&mut self) -> Result<()> {
+        self.data.first_run = false;
         self.save_config()
     }
 

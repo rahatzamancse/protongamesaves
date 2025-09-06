@@ -45,9 +45,26 @@ fn main() -> glib::ExitCode {
         
     // Connect to the activate signal
     app.connect_activate(|app| {
-        // Create the main window
-        let window = ui::window::ProtonSavesWindow::new(app);
-        window.present();
+        // Create config to check if it's first run
+        let config = std::rc::Rc::new(std::cell::RefCell::new(config::Config::new()));
+        
+        if config.borrow().is_first_run() {
+            // Show welcome dialog first
+            let welcome = ui::welcome_dialog::WelcomeDialog::new(
+                Some(app), 
+                config.clone(),
+                glib::clone!(@weak app => move || {
+                    // After welcome is complete, show main window
+                    let window = ui::window::ProtonSavesWindow::new(&app);
+                    window.present();
+                })
+            );
+            welcome.present();
+        } else {
+            // Show main window directly
+            let window = ui::window::ProtonSavesWindow::new(app);
+            window.present();
+        }
     });
     
     // Run the application

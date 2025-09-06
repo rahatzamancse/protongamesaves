@@ -5,6 +5,10 @@
 
 set -e
 
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
 echo "Generating Flatpak cargo sources..."
 
 # Check if python3 is available
@@ -43,6 +47,12 @@ if [ -d "venv" ] && [ -f "venv/bin/python" ]; then
     python ./flatpak-cargo-generator.py ../../Cargo.lock -o generated-sources.json
 else
     python3 ./flatpak-cargo-generator.py ../../Cargo.lock -o generated-sources.json
+fi
+
+# Clean up the downloaded generator script
+if [ -f "flatpak-cargo-generator.py" ]; then
+    echo "Cleaning up flatpak-cargo-generator.py..."
+    rm flatpak-cargo-generator.py
 fi
 
 echo "Generated sources saved to generated-sources.json"
