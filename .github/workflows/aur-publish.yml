@@ -1,0 +1,65 @@
+name: AUR Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (e.g., 0.1.0)"
+        required: true
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve version
+        id: resolve
+        shell: bash
+        run: |
+          VERSION_INPUT="${{ github.event.inputs.version }}"
+          RELEASE_TAG="${{ github.event.release.tag_name }}"
+          if [ -z "$VERSION_INPUT" ] && [ -n "$RELEASE_TAG" ]; then
+            VERSION_INPUT="$RELEASE_TAG"
+          fi
+          VERSION_INPUT="$(echo "$VERSION_INPUT" | sed 's/^v//')"
+          if [ -z "$VERSION_INPUT" ]; then
+            echo "No version provided."
+            exit 1
+          fi
+          echo "version=$VERSION_INPUT" >> "$GITHUB_OUTPUT"
+
+      - name: Update PKGBUILD version
+        shell: bash
+        run: |
+          PKGBUILD_PATH="packaging/aur/PKGBUILD"
+          if [ ! -f "$PKGBUILD_PATH" ]; then
+            echo "PKGBUILD not found at $PKGBUILD_PATH"
+            exit 1
+          fi
+          sed -i "s/^pkgver=.*/pkgver=${{ steps.resolve.outputs.version }}/" "$PKGBUILD_PATH"
+          sed -i "s/^pkgrel=.*/pkgrel=1/" "$PKGBUILD_PATH"
+          echo "Updated pkgver to ${{ steps.resolve.outputs.version }} and reset pkgrel to 1"
+          echo "Diff:" && git --no-pager diff -- "$PKGBUILD_PATH" | cat
+
+      - name: Publish AUR package
+        uses: KSXGitHub/github-actions-deploy-aur@v4.1.1
+        with:
+          pkgname: proton-game-saves
+          pkgbuild: packaging/aur/PKGBUILD
+          updpkgsums: true
+          test: false
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: "Update to version ${{ steps.resolve.outputs.version }}"
+
+      - name: Note
+        run: |
+          echo "Ensure repo secrets are set: AUR_USERNAME, AUR_EMAIL, AUR_SSH_PRIVATE_KEY"
+
