@@ -62,12 +62,16 @@ echo "📋 Changes to be committed:"
 git diff
 
 # Ask for confirmation
-read -p "🤔 Do you want to commit and push these changes? (y/N): " -n 1 -r
-echo
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "❌ Aborted by user"
-    rm -rf "${TMP_DIR}"
-    exit 1
+if [ -n "$CI" ]; then
+    echo "CI detected, auto-confirming commit and push."
+else
+    read -p "🤔 Do you want to commit and push these changes? (y/N): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "❌ Aborted by user"
+        rm -rf "${TMP_DIR}"
+        exit 1
+    fi
 fi
 
 # Commit and push

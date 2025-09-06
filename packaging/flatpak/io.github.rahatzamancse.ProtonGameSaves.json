@@ -10,6 +10,7 @@
     "finish-args": [
         "--share=ipc",
         "--socket=wayland",
+        "--socket=fallback-x11",
         "--share=network",
         "--own-name=io.github.rahatzamancse.ProtonGameSaves",
         "--filesystem=~/.local/share/Steam:rw",
@@ -41,8 +42,9 @@
             ],
             "sources": [
                 {
-                    "type": "dir",
-                    "path": "../../"
+                    "type": "archive",
+                    "path": "https://github.com/rahatzamancse/ProtonGameSaves/archive/refs/tags/v0.1.0.tar.gz",
+                    "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
                 },
                 "generated-sources.json"
             ]
