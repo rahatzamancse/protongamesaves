@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.rahatzamancse.ProtonGameSaves</id>
+  <name>Proton Game Saves Manager</name>
+  <summary>Manage Proton game save files for Steam games</summary>
+  <description>
+    <p>
+      Proton Game Saves Manager is a modern GTK4 application that helps you manage save files
+      for Steam games running through Proton compatibility layer. It provides an easy-to-use
+      interface to browse, organize, and manage your game saves.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Browse and manage Proton prefix folders</li>
+      <li>Easily navigate to save file locations for each game</li>
+      <li>Delete unwanted prefixes to free up space</li>
+      <li>Configure Steam directory location</li>
+      <li>Modern GTK4/libadwaita UI following GNOME design guidelines</li>
+    </ul>
+  </description>
+  <categories>
+    <category>Game</category>
+    <category>Utility</category>
+  </categories>
+  <keywords>
+    <keyword>steam</keyword>
+    <keyword>proton</keyword>
+    <keyword>games</keyword>
+    <keyword>saves</keyword>
+    <keyword>manager</keyword>
+  </keywords>
+  <url type="homepage">https://github.com/rahatzamancse/proton-game-saves</url>
+  <url type="bugtracker">https://github.com/rahatzamancse/proton-game-saves/issues</url>
+  <url type="vcs-browser">https://github.com/rahatzamancse/proton-game-saves</url>
+  <launchable type="desktop-id">io.github.rahatzamancse.ProtonGameSaves.desktop</launchable>
+  <provides>
+    <binary>proton-game-saves</binary>
+  </provides>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Main window - Compatdata and Games</caption>
+      <image type="source">file:///app/share/metainfo/io.github.rahatzamancse.ProtonGameSaves/pic1.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Settings and Save paths</caption>
+      <image type="source">file:///app/share/metainfo/io.github.rahatzamancse.ProtonGameSaves/pic2.png</image>
+    </screenshot>
+  </screenshots>
+  <content_rating type="oars-1.1" />
+  <developer_name>Rahat Zaman</developer_name>
+  <update_contact>rahatzamancse@gmail.com</update_contact>
+  <releases>
+    <release version="0.1.0" date="2024-01-01">
+      <description>
+        <p>Initial release with core functionality:</p>
+        <ul>
+          <li>Browse and manage Proton prefix folders</li>
+          <li>Navigate to save file locations</li>
+          <li>Delete unwanted prefixes</li>
+          <li>Modern GTK4/libadwaita interface</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+  <project_license>GPL-3.0</project_license>
+  <metadata_license>CC0-1.0</metadata_license>
+</component>

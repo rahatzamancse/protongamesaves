@@ -22,3 +22,26 @@ target/
 # Specific files
 .SRCINFO
 proton-game-saves-0.1.0.tar.gz
+ 
+# Flatpak build artifacts
+packaging/flatpak/build/
+packaging/flatpak/repo/
+packaging/flatpak/.flatpak-builder/
+packaging/flatpak/venv/
+packaging/flatpak/generated-sources.json
+
+# AUR build artifacts
+packaging/aur/pkg/
+packaging/aur/src/
+packaging/aur/*.pkg.tar*
+packaging/aur/*.tar.*
+packaging/aur/*.src.tar.*
+
+# Editor/OS junk
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+.vscode/
+.idea/

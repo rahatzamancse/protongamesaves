@@ -1,6 +1,6 @@
 #!/bin/bash
 # Manual AUR package update script
-# Usage: ./scripts/update-aur.sh <version>
+# Usage: ./packaging/aur/update-aur.sh <version>
 
 set -e
 
@@ -17,8 +17,14 @@ TARBALL_URL="${REPO_URL}/archive/v${VERSION}.tar.gz"
 echo "🔄 Updating AUR package to version ${VERSION}..."
 
 # Check if we're in the right directory
-if [ ! -f "PKGBUILD" ]; then
-    echo "❌ Error: PKGBUILD not found. Are you in the project root?"
+if [ -f "packaging/aur/PKGBUILD" ]; then
+    # We're in the project root
+    PKGBUILD_PATH="$(pwd)/packaging/aur/PKGBUILD"
+elif [ -f "PKGBUILD" ]; then
+    # We're in the packaging/aur directory
+    PKGBUILD_PATH="$(pwd)/PKGBUILD"
+else
+    echo "❌ Error: PKGBUILD not found. Run this script from the project root or from packaging/aur/"
     exit 1
 fi
 
@@ -36,6 +42,10 @@ echo "✅ SHA256: ${SHA256}"
 echo "📦 Cloning AUR repository..."
 git clone ssh://aur@aur.archlinux.org/proton-game-saves.git "${AUR_DIR}"
 cd "${AUR_DIR}"
+
+# Copy local PKGBUILD to AUR repository
+echo "📋 Copying local PKGBUILD..."
+cp "${PKGBUILD_PATH}" PKGBUILD
 
 # Update PKGBUILD
 echo "📝 Updating PKGBUILD..."

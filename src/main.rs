@@ -40,7 +40,7 @@ fn main() -> glib::ExitCode {
     
     // Create a new application
     let app = adw::Application::builder()
-        .application_id("com.github.proton.gamesaves")
+        .application_id("io.github.rahatzamancse.ProtonGameSaves")
         .build();
         
     // Connect to the activate signal

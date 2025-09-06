@@ -12,6 +12,12 @@
 
 A GTK4 application written in Rust to manage Proton game save files for Steam games running through Proton compatibility layer.
 
+## Screenshots
+
+![Main window](resources/pic1.png)
+
+![Settings](resources/pic2.png)
+
 ## Features
 
 - Browse and manage Proton prefix folders
