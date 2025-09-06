@@ -188,11 +188,11 @@ impl ProtonSavesWindow {
             .transient_for(window)
             .application_name("Proton Game Saves Manager")
             .version("0.1.0")
-            .developer_name("Proton Game Saves Manager Team")
+            .developer_name("Rahat Zaman")
             .license_type(gtk::License::Gpl30)
             .comments("Manage your Steam Proton game save files")
-            .website("https://github.com/username/proton-gamesaves")
-            .issue_url("https://github.com/username/proton-gamesaves/issues")
+            .website("https://github.com/rahatzamancse/protongamesaves")
+            .issue_url("https://github.com/rahatzamancse/protongamesaves/issues")
             .build();
             
         about.present();

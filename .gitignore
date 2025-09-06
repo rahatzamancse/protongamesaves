@@ -21,7 +21,7 @@ target/
 
 # Specific files
 .SRCINFO
-proton-game-saves-0.1.0.tar.gz
+protongamesaves-0.1.0.tar.gz
  
 # Flatpak build artifacts
 packaging/flatpak/build/

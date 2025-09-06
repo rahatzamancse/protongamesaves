@@ -11,7 +11,7 @@ if [ $# -ne 1 ]; then
 fi
 
 VERSION="$1"
-REPO_URL="https://github.com/rahatzamancse/proton-game-saves"
+REPO_URL="https://github.com/rahatzamancse/protongamesaves"
 TARBALL_URL="${REPO_URL}/archive/v${VERSION}.tar.gz"
 
 echo "🔄 Updating AUR package to version ${VERSION}..."

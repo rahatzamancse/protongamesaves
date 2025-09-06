@@ -22,17 +22,17 @@ clean:
 
 # Install the application system-wide (requires root)
 install: release
-	install -Dm755 target/release/proton_game_saves /usr/bin/proton-game-saves
-	install -Dm644 proton-game-saves.desktop /usr/share/applications/proton-game-saves.desktop
-	install -Dm644 README.md /usr/share/doc/proton-game-saves/README.md
-	install -Dm644 LICENSE /usr/share/licenses/proton-game-saves/LICENSE
+	install -Dm755 target/release/proton_game_saves /usr/bin/protongamesaves
+	install -Dm644 protongamesaves.desktop /usr/share/applications/protongamesaves.desktop
+	install -Dm644 README.md /usr/share/doc/protongamesaves/README.md
+	install -Dm644 LICENSE /usr/share/licenses/protongamesaves/LICENSE
 
 # Uninstall the application
 uninstall:
-	rm -f /usr/bin/proton-game-saves
-	rm -f /usr/share/applications/proton-game-saves.desktop
-	rm -rf /usr/share/doc/proton-game-saves
-	rm -rf /usr/share/licenses/proton-game-saves
+	rm -f /usr/bin/protongamesaves
+	rm -f /usr/share/applications/protongamesaves.desktop
+	rm -rf /usr/share/doc/protongamesaves
+	rm -rf /usr/share/licenses/protongamesaves
 
 # Build Arch package
 package:
@@ -52,7 +52,7 @@ srcinfo:
 
 # Validate desktop file
 desktop-validate:
-	desktop-file-validate proton-game-saves.desktop
+	desktop-file-validate protongamesaves.desktop
 
 # Lint the code
 lint:

@@ -29,9 +29,9 @@
     <keyword>saves</keyword>
     <keyword>manager</keyword>
   </keywords>
-  <url type="homepage">https://github.com/rahatzamancse/proton-game-saves</url>
-  <url type="bugtracker">https://github.com/rahatzamancse/proton-game-saves/issues</url>
-  <url type="vcs-browser">https://github.com/rahatzamancse/proton-game-saves</url>
+  <url type="homepage">https://github.com/rahatzamancse/protongamesaves</url>
+  <url type="bugtracker">https://github.com/rahatzamancse/protongamesaves/issues</url>
+  <url type="vcs-browser">https://github.com/rahatzamancse/protongamesaves</url>
   <launchable type="desktop-id">io.github.rahatzamancse.ProtonGameSaves.desktop</launchable>
   <provides>
     <binary>proton-game-saves</binary>
