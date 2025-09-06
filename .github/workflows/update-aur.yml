@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version to release (e.g., 0.1.1)"
+        description: "Version to release (e.g., 0.1.0)"
         required: true
   release:
     types: [published]
@@ -21,6 +21,11 @@ jobs:
       - name: Install base-devel and tools
         run: |
           pacman -Syu --noconfirm git base-devel rust cargo wget openssh
+          pacman -S --noconfirm pacman sudo
+      - name: Verify makepkg availability
+        run: |
+          which makepkg
+          makepkg --version
       - name: Create build user (non-root)
         run: |
           useradd -m build
