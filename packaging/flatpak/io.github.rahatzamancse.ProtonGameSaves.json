@@ -1,7 +1,7 @@
 {
     "app-id": "io.github.rahatzamancse.ProtonGameSaves",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "47",
+    "runtime-version": "48",
     "sdk": "org.gnome.Sdk",
     "sdk-extensions": [
         "org.freedesktop.Sdk.Extension.rust-stable"
@@ -11,9 +11,6 @@
         "--share=ipc",
         "--socket=wayland",
         "--socket=fallback-x11",
-        "--share=network",
-        "--own-name=io.github.rahatzamancse.ProtonGameSaves",
-        "--filesystem=~/.local/share/Steam:rw",
         "--filesystem=~/.steam:rw"
     ],
     "build-options": {
@@ -43,8 +40,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "path": "https://github.com/rahatzamancse/ProtonGameSaves/archive/refs/tags/v0.1.0.tar.gz",
-                    "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+                    "path": "https://github.com/rahatzamancse/ProtonGameSaves/archive/v0.1.0.tar.gz",
+                    "sha256": "skip"
                 },
                 "generated-sources.json"
             ]

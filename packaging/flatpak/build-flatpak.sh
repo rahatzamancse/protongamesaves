@@ -25,19 +25,41 @@ if [ ! -f "generated-sources.json" ]; then
     ./generate-sources.sh
 fi
 
-# Clean previous builds
-echo "Cleaning previous builds..."
+# Clean previous builds and remote
+echo "Cleaning previous builds and remote..."
 rm -rf "$BUILD_DIR" "$REPO_DIR"
+
+# Remove existing remote if it exists (ignore errors)
+echo "Removing existing remote repository..."
+flatpak --user remote-delete proton-game-saves-repo 2>/dev/null || true
 
 # Build the Flatpak
 echo "Building Flatpak..."
-flatpak-builder "$BUILD_DIR" "$MANIFEST_FILE" --force-clean --ccache
+if ! flatpak-builder "$BUILD_DIR" "$MANIFEST_FILE" --force-clean --ccache; then
+    echo "Error: Failed to build Flatpak"
+    exit 1
+fi
 
 # Install locally for testing
-echo "Installing Flatpak locally..."
-flatpak-builder --repo="$REPO_DIR" "$BUILD_DIR" "$MANIFEST_FILE" --force-clean
-flatpak --user remote-add --if-not-exists --no-gpg-verify proton-game-saves-repo "$REPO_DIR"
-flatpak --user install proton-game-saves-repo "$APP_ID" -y
+echo "Creating local repository..."
+if ! flatpak-builder --repo="$REPO_DIR" "$BUILD_DIR" "$MANIFEST_FILE" --force-clean; then
+    echo "Error: Failed to create Flatpak repository"
+    exit 1
+fi
+
+echo "Adding local repository..."
+if ! flatpak --user remote-add --if-not-exists --no-gpg-verify proton-game-saves-repo "$REPO_DIR"; then
+    echo "Error: Failed to add remote repository"
+    echo "Repository directory contents:"
+    ls -la "$REPO_DIR"
+    exit 1
+fi
+
+echo "Installing from local repository..."
+if ! flatpak --user install proton-game-saves-repo "$APP_ID" -y; then
+    echo "Error: Failed to install Flatpak"
+    exit 1
+fi
 
 echo ""
 echo "✅ Flatpak built and installed successfully!"
